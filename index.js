@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import styled from 'styled-components';
-import { DragDropContext } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import initData from './data';
 import Column from './column'
 
@@ -12,7 +12,7 @@ const Container = styled.div`
 class App extends React.Component {
   state = initData;
   onDragEnd = result => {
-    const { destination, source, draggableId } = result;
+    const { destination, source, draggableId, type } = result;
 
     if(!destination){
       return;
@@ -22,6 +22,19 @@ class App extends React.Component {
       destination.droppableId === source.droppableId &&
       destination.index === source.index
     ) {
+      return;
+    }
+
+    if(type === 'column'){
+      const newColumnOrder = Array.from(this.state.columnOrder);
+      newColumnOrder.splice(source.index, 1);
+      newColumnOrder.splice(destination.index, 0, draggableId);
+
+      const newState = {
+        ...this.state,
+        columnOrder: newColumnOrder,
+      };
+      this.setState(newState);
       return;
     }
 
@@ -80,16 +93,28 @@ class App extends React.Component {
   render() {
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
-        <Container>
-          {
-            this.state.columnOrder.map(columnID => {
-              const column = this.state.columns[columnID];
-              const tasks = column.taskIds.map(taskID => this.state.tasks[taskID]);
+        <Droppable 
+          droppableId="allcolumns"
+          direction="horizontal"
+          type="column"
+        >
+          {(provided) => (
+            <Container
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              {
+                this.state.columnOrder.map((columnID, index) => {
+                  const column = this.state.columns[columnID];
+                  const tasks = column.taskIds.map(taskID => this.state.tasks[taskID]);
 
-              return <Column key={column.id} column={column} tasks={tasks} />;
-            })
-          }
-        </Container>
+                  return <Column key={column.id} column={column} tasks={tasks} index={index} />;
+                })
+              }
+              {provided.placeholder}
+            </Container>
+          )}
+        </Droppable>
       </DragDropContext>
     )
   }
