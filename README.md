@@ -1,3 +1,1 @@
-# react-gzmtvb
-
-[Edit on StackBlitz ⚡️](https://stackblitz.com/edit/react-gzmtvb)
+## Rect.js App with drag and drop options: Reorder Columns
