@@ -15,13 +15,8 @@ const initData = {
       title: 'In Progress',
       taskIds: []
     },
-    'column03':{
-      id: 'column03',
-      title: 'DONE',
-      taskIds: []
-    },
   },
-  columnOrder: ['column01', 'column02', 'column03']
+  columnOrder: ['column01', 'column02']
 };
 
 export default initData;
